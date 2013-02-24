@@ -1,0 +1,41 @@
+#!/usr/bin/python
+
+import os
+import glob
+import sys
+
+""" Removes restart files, uaxxxa@dayyymd, keeping every 5th year.
+Need to 'chmod +x remove_restarts.py'
+Usage: ./remove_restarts.py uagdk
+where uagdk is the experiment or directory of output files. In this case the program is in the output folder, e.g. /short/w48/nlt565/UM_ROUTDIR/nlt565/.
+You can change the kept files by changing the argument of keep=glob.glob(dir+'/*511'),etc.
+You can say 'n' when prompted to see which files will be deleted without deleting them.
+Author: Nicholas Tyrrell. Dec 2012.
+nicholas.tyrrell@monash.edu
+"""
+dir=sys.argv[1]
+# get list of all restart files in directory, assuming restarts are of form: uaxxxa@dayyymd.
+ls = sorted(glob.glob(dir+'/*a@da*'))
+# Get one restart file every 5 years, where '5' and '0' are the year, e.g. yr 005,010,015,020..., and '11' is Jan 1st. e.g. keeps uaxxxa@da00011, uaxxxa@da00511, uaxxxa@da01011
+keep = sorted(glob.glob(dir+'/*511')+glob.glob(dir+'/*011'))
+# Pull out the kept years that wont be deleted.
+for n in keep:
+  ls.remove(n)
+
+print('For experiment '+dir)
+print('The following files will be kept: ')
+for k in keep:
+  print(k)
+
+check=raw_input('Do you want to delete all other restart files? [y/n]: ')
+
+if check == 'y':
+  for m in ls:
+    print('Deleting '+m)
+    os.remove(m)
+elif check == 'n':
+  for m in ls:
+    print('NOT Deleting '+m)
+  print('Nothing deleted')
+
+
