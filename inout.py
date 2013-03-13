@@ -4,14 +4,19 @@ import Scientific.IO.NetCDF as S
 
 # Import netcdf file as array
 def readnc(nc_file,variable):
-  """ Function the reads in an nc file and outputs a numpy array """
+  """ Function the reads in an nc file and outputs a numpy array
+	Input: ncfile, variable. Both as strings
+	example: './ncfiles/temp.sfc.nc','temp'
+	returns: nc_data, nc_fileobj
+	use io.readnc('...')[0] to just get data"""
   nc_fileobj = S.NetCDFFile(nc_file,mode='r')
   nc_data = nc_fileobj.variables[variable].getValue()
   return nc_data, nc_fileobj
 
 # Export result map
 def writenc4d(nc_fileout,ancil):
-  """ Use regmap, or similar, and add anomaly to a 12 month climatology """
+  """ Use regmap, or similar, and add anomaly to a 12 month climatology
+	Doesn't create new netcdf file, overwrites"""
   nc_out = S.NetCDFFile(nc_fileout,mode='a')
   var=nc_out.variables['temp']
   data_out=var.getValue()
@@ -40,11 +45,13 @@ def writetext(data,text_file):
 
 
 # Export result map
-def writenc(nc_fileout,outdata,var,dims=4,ext_data=None):
+def writenc(nc_fileout,data,var,dims=4,ext_data=None):
 	""" input: nc_fileout - nc file that will be overwritten
-	outdata - a (t,z,lat,lon) array to write to ncfile
+	data - a (t,z,lat,lon) array to write to ncfile
 	var - e.g. temp, sst of ncfile
 	dims - dimensions of outdata
+	ext_data - yes/None, input yes if data has t=1, and nc has t=12, the data
+	will be extended to 12.
 	"""
 	nc_out = S.NetCDFFile(nc_fileout,mode='a')
 	values=nc_out.variables[var]
@@ -54,8 +61,8 @@ def writenc(nc_fileout,outdata,var,dims=4,ext_data=None):
 	#elif dims==3:
 	if ext_data!=None:
 		extd = np.zeros(data_out.shape)
-		outdata = extd + outdata
-	data_out[:,:,:,:]=outdata[:,:,:,:]
+		data = extd + data
+	data_out[:,:,:,:]=data[:,:,:,:]
 	values[:]=data_out
 	nc_out.close()
 	return 

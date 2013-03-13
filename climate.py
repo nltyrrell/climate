@@ -54,6 +54,7 @@ def landocmask(icenc,lsmasknc):
 	Input: nc file of ice concentration, land-sea mask (as strings)
 	Output: ice free ocean mask (1s and 0s)
 	To use: ocean = ma.masked_where(icexp<1,tempsfc)
+	example: 
 	"""
 	lsmask=io.readnc(lsmasknc,'lsm')[0][0,0,:,:]
 	#Create an icefree ocean mask
@@ -80,6 +81,7 @@ def weightave(data, mask=None):
 	#	elif mask.ndim ==3:
 	#		mask3 = mask.copy()
 	  
+	# From Thom Chubb; create a grid of lat/lon values, only works for 96x73
 	lon = np.linspace(0,356.25,96)
 	lat = np.linspace(-90,90,73)
 	LON,LAT = np.meshgrid(lon,lat)
