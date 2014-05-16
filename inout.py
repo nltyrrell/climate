@@ -14,15 +14,29 @@ def readnc(nc_file,variable):
   return nc_data, nc_fileobj
 
 # Export result map
-def writenc4d(nc_fileout,ancil):
+def writenc4d(nc_fileout,ancil,varname='temp'):
   """ Use regmap, or similar, and add anomaly to a 12 month climatology
 	Doesn't create new netcdf file, overwrites"""
   nc_out = S.NetCDFFile(nc_fileout,mode='a')
-  var=nc_out.variables['temp']
+  var=nc_out.variables[varname]
   data_out=var.getValue()
   #anc_exp = np.repeat(np.expand_dims(ancil,axis=0),12,0)
   #ancil2=np.expand_dims(anc_exp,axis=1)
   data_out[:,:,:,:]=ancil[:,:,:,:]
+  var[:]=data_out
+  nc_out.close()
+  return ancil
+
+# Export result map
+def writenc3d(nc_fileout,ancil,varname='sst'):
+  """ Use regmap, or similar, and add anomaly to a 12 month climatology
+	Doesn't create new netcdf file, overwrites"""
+  nc_out = S.NetCDFFile(nc_fileout,mode='a')
+  var=nc_out.variables[varname]
+  data_out=var.getValue()
+  #anc_exp = np.repeat(np.expand_dims(ancil,axis=0),12,0)
+  #ancil2=np.expand_dims(anc_exp,axis=1)
+  data_out[:,:,:]=ancil[:,:,:]
   var[:]=data_out
   nc_out.close()
   return ancil
@@ -45,7 +59,7 @@ def writetext(data,text_file):
 
 
 # Export result map
-def writenc(nc_fileout,data,var,dims=4,ext_data=None):
+def writenc(nc_fileout,data,var='temp',dims=4,ext_data=None):
 	""" input: nc_fileout - nc file that will be overwritten
 	data - a (t,z,lat,lon) array to write to ncfile
 	var - e.g. temp, sst of ncfile

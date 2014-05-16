@@ -1,5 +1,36 @@
 from matplotlib.colors import LinearSegmentedColormap
 
+def whitejet(n=256):
+  cdict = {'red':(
+    (0.00, 0.0, 0.0), 
+    (0.35, 0.0, 0.0), 
+    (0.45, 1.0, 1.0),
+    (0.50, 1.0, 1.0),
+    (0.55, 1.0, 1.0),
+    (0.60, 0.9, 0.9), 
+    (0.89, 1.0, 1.0), 
+    (1,    0.5, 0.5)), 
+    'green':(
+    (0.00, 0.0, 0.0), 
+    (0.13, 0.0, 0.0), 
+    (0.43, 1.0, 1.0), 
+    (0.45, 1.0, 1.0),
+    (0.50, 1.0, 1.0),
+    (0.55, 1.0, 1.0),
+    (0.60, 0.9, 0.9), 
+    (0.91, 0.0, 0.0), 
+    (1,    0.0, 0.0)), 
+    'blue':(
+    (0.00, 0.4, 0.4), 
+    (0.11, 1.0, 1.0), 
+    (0.34, 0.6, 0.6), 
+    (0.45, 1.0, 1.0),
+    (0.50, 1.0, 1.0),
+    (0.55, 1.0, 1.0),
+    (0.60, 0.0, 0.0), 
+    (1,    0.0, 0.0))} 
+  return LinearSegmentedColormap('my_colormap',cdict,n)
+
 def jetwhite(n=256):
   cdict = {'red':(
     (0.00, 0.0, 0.0), 
@@ -50,7 +81,94 @@ def whiterjet(n=16):
     (1,    0.0, 0.0))} 
   return LinearSegmentedColormap('my_colormap',cdict,n)
 
+def wetdry(n=256):
+	cdict = {'blue':(
+			(0.0, 0.01, 0.01), 
+			(0.1, 0.03, 0.03), 
+			(0.2, 0.17, 0.17), 
+			(0.3, 0.29, 0.29), 
+			(0.4, 0.26, 0.26), 
+			(0.5, 0.26, 0.26),
+			(0.6, 0.59, 0.59),
+			(0.7, 0.65, 0.65),
+			(0.8, 0.56, 0.56),
+			(0.9, 0.36, 0.36), 
+			(1.0, 0.18, 0.18)),
 
+		'green': (
+			(0.0, 0.18, 0.18),
+			(0.1, 0.31, 0.31),
+			(0.2, 0.50, 0.50),
+			(0.3, 0.86, 0.86),
+			(0.4, 0.90, 0.90),
+			(0.5, 0.76, 0.76),
+			(0.6, 0.71, 0.71),
+			(0.7, 0.80, 0.80),
+			(0.8, 0.59, 0.59),
+			(0.9, 0.40, 0.40),
+			(1.0, 0.23, 0.23)),
+
+		'red': (
+			(0.0, 0.42, 0.42),
+			(0.1, 0.54, 0.54),
+			(0.2, 0.74, 0.74),
+			(0.3, 0.67, 0.67),
+			(0.4, 0.46, 0.46),
+			(0.5, 0.46, 0.46),
+			(0.6, 0.48, 0.48),
+			(0.7, 0.50, 0.50),
+			(0.8, 0.20, 0.20),
+			(0.9, 0.00, 0.00),
+			(1.0, 0.0, 0.0))}
+	return LinearSegmentedColormap('my_colormap',cdict,n)
+
+blue1, blue2, blue3, blue4, blue5 = ['#EAF4FF', '#DFEFFF', '#BFDFFF', '#95CAFF', '#55AAFF']
+blue6, blue7, blue8, blue9, blue10 = ['#0B85FF', '#006AD5', '#004080', '#002B55', '#001B35']
+
+brown1, brown2, brown3, brown4, brown5 = ['#FFFAEA', '#FFF8DF', '#FFEFBF', '#FFE495', '#FFD555']
+brown6, brown7, brown8, brown9, brown10 = ['#FFC20B', '#D59F00', '#806000', '#554000', '#352800']
+
+hot1, hot2, hot3, hot4, hot5 = ['#FFFFEA', '#FFFFDF', '#FFFF95', '#FFFF0B', '#FFAA0B']
+hot6, hot7, hot8, hot9, hot10 = ['#FF660B', '#FF0B0B', '#800000', '#550000', '#350000']
+
+red1, red2, red3, red4, red5 = ['#FFEAEA', '#FFDFDF', '#FFBFBF', '#FF9595', '#FF5555']
+red6, red7, red8, red9, red10 = ['#FF0B0B', '#D50000', '#800000', '#550000', '#350000']
+
+green1, green2, green3, green4, green5, = ['#F4FFEA', '#EFFFDF', '#DFFFBF', '#CAFF95', '#AAFF55']
+green6, green7, green8, green9, green10 = ['#85FF0B', '#6AD500', '#408000', '#2B5500', '#1B3500']
+
+purple1, purple2, purple3, purple4, purple5 = ['#F4EAFF', '#EFDFFF', '#DFBFFF', '#CA95FF', '#AA55FF']
+purple6, purple7, purple8, purple9, purple10 = ['#850BFF', '#6A00D5', '#400080', '#2B0055', '#1B0035']
+
+grey1, grey2, grey3, grey4, grey5, grey6 = ['#FFFFFF', '#EBEBEB', '#E6E6E6', '#DCDCDC', '#D2D2D2', '#CCCCCC']
+grey7, grey8, grey9, grey10, grey11, grey12 = ['#787878', '#666666', '#4B4B4B', '#333333', '#1E1E1E', '#000000']
+
+jet0, jet1, jet2, jet3, jet4, jet5, jet6 = ['#001B35', '#000080', '#0000D5', '#006AD5', '#55AAFF', '#55FFFF', '#55FFAA']
+jet7, jet8, jet9, jet10, jet11, jet12 = ['#D5FF55', '#FFD555', '#FF850B', '#D51B00', '#800000', '#350000']
+
+IPCCrain1, IPCCrain2, IPCCrain3, IPCCrain4, IPCCrain5, IPCCrain6 = ['#FFF295', '#FFD555', '#FF850B', '#D55000', '#D50000', '#550040']
+IPCCrain7, IPCCrain8, IPCCrain9, IPCCrain10, IPCCrain11, IPCCrain12 = ['#600080', '#000080', '#0000D5', '#0B85FF', '#55AAFF', '#95CAFF']
+
+def _generate_colourmap(colourmap, nsegs):
+    """Return a discrete colormap from the continuous colormap,
+       according to the number of segments (nsegs)."""
+        
+    segs = []
+    for i in range(0, nsegs):
+	c = colourmap(float(float(i)/float(nsegs)), 1)
+	segs.append(c)
+    colourmap = matplotlib.colors.ListedColormap(segs[:], 'indexed')
+    
+    return colourmap
+
+
+def drywet(n=256):
+	cdict = {'blue': [(0.0, 0.164705887437, 0.164705887437), (0.20000000298, 0.392156869173, 0.392156869173), (0.40000000596, 0.529411792755, 0.529411792755), (0.600000023842, 0.921568632126, 0.921568632126), (0.800000011921, 0.933333337307, 0.933333337307), (1.0, 0.317647075653, 0.317647075653)], 
+			'green': [(0.0, 0.280392163992, 0.280392163992), (0.20000000298, 0.780392169952, 0.780392169952), (0.40000000596, 0.933333337307, 0.933333337307), (0.600000023842, 0.933333337307, 0.933333337307), (0.800000011921, 0.470588237047, 0.470588237047), (1.0, 0.00392156885937, 0.00392156885937)], 
+			'red': [(0.0, 0.425490224361, 0.425490224361), (0.20000000298, 0.933333337307, 0.933333337307), (0.40000000596, 0.705882370472, 0.705882370472), (0.600000023842, 0.196078434587, 0.196078434587), (0.800000011921, 0.0470588244498, 0.0470588244498), (1.0, 0.149019613862, 0.149019613862)]}
+	return LinearSegmentedColormap('my_colormap',cdict,n)
+
+"""
 def threebit(n=8):
 
     cdict = {'red': (  (0.000, 0.75, 0.75), # grey
@@ -347,4 +465,4 @@ def olive_fade():
 		       (1.000, 0.00, 0.00))}
 
     return LinearSegmentedColormap('my_colormap',cdict,256)
-
+"""

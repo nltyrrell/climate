@@ -9,6 +9,7 @@ def cormap(txt_ts,ncarray,lag=0):
 	"""input: txt_file... a text file string
 	          ncfilein... an ncfile - string
 	"""
+	col=0
 	tdim = ncarray.shape[0]
 	if ncarray.ndim==4:
 		map_ts=ncarray[:,0,:,:]
@@ -52,9 +53,12 @@ def regmap(txt_ts,data,lag=0,statvar=0):
 		for j in xrange(lon):
 			#slope, intercept, r_val, p_val, stderr = stats.linregress(map_ts[:,i,j],txt_ts[:,col])
 			#stattup = stats.linregress(map_ts[lag:1706,i,j],txt_ts[0:1706-lag,col])
+			print('i = '+str(i))
+			print('j = '+str(j))
 			stattup = stats.linregress(txt_ts[0:tdim-lag],map_ts[lag:tdim,i,j])
 			#stattup = stats.linregress(txt_ts[11+lag:1695,col],map_ts[11:1695-lag,i,j])
-			reg_map[i,j] = stattup[0].copy()
+			print(stattup[statvar])
+			reg_map[i,j] = stattup[statvar] #.copy()
 			reg_II = np.nan_to_num(reg_map)
 			out_reg = np.ma.masked_outside(reg_II,-1e9,1e9)
 	return out_reg
@@ -107,6 +111,47 @@ def crosscormap(txt_ts,data,maxlag=24):
 			#out_reg = np.ma.masked_outside(reg_II,-1e-9,1e9)
 	return maxcor_map, maxcorlag_map
 
+# Tl/To
+def tltomap(datain,txt_ts,lag=0):
+	"""input: txt_file... a text file string
+	          ncfilein... an ncfile - string
+	"""
+	col=0
+	tdim = datain.shape[0]
+	if datain.ndim==4:
+		map_ts=datain[:,0,:,:]
+	elif datain.ndim==3:
+		map_ts=datain
+	
+	t,lat,lon = map_ts.shape
+	tlto_map = np.zeros((lat,lon))
+	c_map = np.zeros((lat,lon))
+	rs_map = np.zeros((lat,lon))
+	for i in xrange(lat):
+		for j in xrange(lon):
+# Calculate the land/ocean temp contrast, phi
+#def phi(ts1,ts2):
+#Input: 	Two 1D timeseries, e.g. land/ocean.
+#Output:	Phi, c (correlation coefficient), std(ts1)/std(ts2) 
+			c=np.corrcoef(map_ts[lag:tdim,i,j],txt_ts[0:tdim-lag])[0,1]
+			rs=np.std(map_ts[lag:tdim,i,j])/np.std(txt_ts[0:tdim-lag])
+			phi = c*rs
+#	return phi,c,rs
+			#slope, intercept, r_val, p_val, stderr = stats.linregress(map_ts[:,i,j],txt_ts[:,col])
+			tlto_map[i,j] = phi  
+			c_map[i,j] = c  
+			rs_map[i,j] = rs  
+			#out_cor_map = np.nan_to_num(cor_map)
+	return tlto_map, c_map, rs_map
+
+# Calculate the land/ocean temp contrast, phi
+def phi(ts1,ts2):
+	""" Input: 	Two 1D timeseries, e.g. land/ocean.
+			Output:	Phi, c (correlation coefficient), std(ts1)/std(ts2) """
+	c=np.corrcoef(ts1,ts2)[0,1]
+	rs=np.std(ts1)/np.std(ts2)
+	phi = c*rs
+	return phi,c,rs
 
 
 
