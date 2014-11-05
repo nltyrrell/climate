@@ -207,23 +207,27 @@ def linsimplot(var, clf=True):
 	plt.grid()
 
 def simplot(var,clf=True,clim=False):
-	dims = len(var.shape)
-	if dims == 4:
-		var = var[0,0,::]
-	elif dims == 3:
-		var = var[0,::]
-	else:
-		var=var
-	plt.ion()
-	if clf==True:
-		plt.clf()
-	if clim!=False:
-		plt.pcolormesh(var,cmap=jetwhite(n=256)).set_clim(vmin=-clim,vmax=clim)
-	if clim==False:
-		plt.pcolormesh(var)
-	if clf==True:
-		plt.colorbar()
-	return
+    """ Creates a pcolormesh plot
+    Usage: simplot(array,clim=1.5)
+    kw clim gives positive and negative limits"""
+
+    dims = len(var.shape)
+    if dims == 4:
+            var = var[0,0,::]
+    elif dims == 3:
+            var = var[0,::]
+    else:
+            var=var
+    plt.ion()
+    if clf==True:
+            plt.clf()
+    if clim!=False:
+            plt.pcolormesh(var,cmap=jetwhite(n=256)).set_clim(vmin=-clim,vmax=clim)
+    if clim==False:
+            plt.pcolormesh(var)
+    if clf==True:
+            plt.colorbar()
+    return
 
 def hadmap(mapvar,color_code=jetwhite(n=256),vmin=None,vmax=None, name='test', title='title',lons='longitude',lats='latitude',clf=None,cbaror='Horizontal'):
 	"""

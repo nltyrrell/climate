@@ -3,7 +3,7 @@ import scipy as sp
 from numpy import ma
 from scipy import stats
 import inout as io
-import rstats as rs
+#import rstats as rs
 
 def masklatlon(lonmin=0,lonmax=360,latmin=-90,latmax=90,t=None,had=None):
 	""" Create a mask (1s = True, 0s = False) for a given latitude and longitude 
