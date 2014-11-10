@@ -84,7 +84,7 @@ def composite48m(cube,outstring=False):
     cube        = an Iris cube
     outstring   = a string for the dir and filename of the nc file to beoutput
     example: "/home/nicholat/project/mit_tcm/access_runs/ncfiles/temp.m48.nc"
-    Output: a smaller cube than was put it, only 49 months long in fact
+    Output: a smaller cube than was put in, only 48 months long in fact
     """
     cube_rsc = remove_seascyc(cube) 
     cube_m48 = enscyc_ag(cube_rsc)
