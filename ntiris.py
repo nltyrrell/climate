@@ -56,9 +56,13 @@ def remove_seascyc(cube, time_name='time'):
     Input: cube, time_name='time'
     Output: cube_rsc
     """
-
-    iris.coord_categorisation.add_month_number(cube, 'time', 'month_number')
-    cube_mean = cube[:,:,::].collapsed('time',iris.analysis.MEAN)
+    try:
+        iris.coord_categorisation.add_month_number(cube, time_name, 'month_number')
+    except:
+        pass
+    else:
+        print "month_number added as coord"
+    cube_mean = cube[:,:,::].collapsed(time_name,iris.analysis.MEAN)
     cube_anom = cube-cube_mean
     cube_mon_mean = cube_anom.aggregated_by('month_number', iris.analysis.MEAN)
     seasonal_cycle = bc(cube_anom, cube_mon_mean, 'month_number')
@@ -115,3 +119,46 @@ def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfil
 # composite_m48('dlwr.sfc.4ysl.nc')
 # composite_m48('dswr.sfc.4ysl.nc')
 
+
+def regmean(cube,loni,lonf,lati,latf):
+    """ Define a region and get the area weighted mean
+    Input:  cube, lon_i, lon_f, lat_i, lat_f
+    Output: cube_reg, cube_regmean
+    """
+    cube.coord('latitude').guess_bounds()
+    cube.coord('longitude').guess_bounds()
+    region = iris.Constraint(longitude=lambda l: (loni <= l <= lonf), latitude = lambda l: (lati <= l <= latf))
+    cube_reg = cube.extract(region)
+    grid_areas = iris.analysis.cartography.area_weights(cube_reg)
+    cube_regmean = cube_reg.collapsed(['latitude', 'longitude'],
+                           iris.analysis.MEAN,
+                           weights=grid_areas)
+#     print 'mean sfc '+str(cube_regmean[0].data)
+#     print 'mean p=10 '+str(cube_regmean[10].data)
+    return cube_reg, cube_regmean
+
+
+def nino3_plot(cube):
+    """
+    Plots the nino 3 timeseries for cube, surface temp wold make sense
+    Input: Iris cube (sfc temp)
+    Output: plot of nino3 timeseries, and cube of same thing
+    """
+    try:
+        cube.coord('t').standard_name='time'
+    except:
+        pass
+    else:
+        print "t coord changed to time"
+
+    cube_rsc = remove_seascyc(cube) 
+
+    loni = 210; lonf = 270; lati = -5; latf = 5
+# 			latlon = [-5,5,210,270] #for data from 0 - 360 degress
+    nino3, nino3_mean = regmean(cube_rsc,loni,lonf,lati,latf)
+    plt.ion()
+    plt.clf()
+    qplt.plot(nino3_mean[:,0])
+    plt.title('NINO3 timeseries')
+
+    return nino3, nino3_mean
