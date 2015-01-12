@@ -5,6 +5,7 @@ import iris.plot as iplt
 import iris.quickplot as qplt
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
+import scipy.stats as stats
 import sys
 
 
@@ -162,3 +163,71 @@ def nino3_plot(cube):
     plt.title('NINO3 timeseries')
 
     return nino3, nino3_mean
+
+
+def linregts(cube1,cube2,name1='name1',name2='name2',ncfile_path='/home/nicholat/project/pacemaker/ncfiles/'):
+    """
+    Calculate the regression between a 2d map and a 1d timeseries
+    i.e. regress v onto T_sfc_Aus
+    Input: cube_map, cube_ts (time coord only), name1, name2
+    Output: reg_cube, cor_cube
+    """
+
+    linreg_map = np.zeros(cube1.shape[-2::])
+    cor_map = np.zeros(cube1.shape[-2::])
+    #     cor_map = np.zeros(copy_cube.shape)
+    #     print('Linreg/Cor map for '+name1+' and '+name2)
+
+    regress_ts = cube2.data
+    for nlat, lat in enumerate(cube1.coord('latitude')):
+        for nlon, lon in enumerate(cube1.coord('longitude')):
+            # get the sfc temp timeseries at each lat, lon.
+            var1 = cube1.extract(iris.Constraint(latitude=lat.points[0],longitude=lon.points[0])).data
+    #             var2 = cube2.extract(iris.Constraint(latitude=lat.points[0],longitude=lon.points[0])).data
+
+            linreg = stats.linregress(var1,regress_ts)
+            linreg_map[nlat,nlon] = linreg[0]
+            cor_map[nlat,nlon] = linreg[2]
+
+        
+
+    if cube1.ndim==4:
+        reg_cube = cube1[0,0,::].copy()
+    elif cube1.ndim==3:
+        reg_cube = cube1[0,::].copy()
+    reg_cube.data[:] = linreg_map
+    reg_cube.long_name = 'Lin Regression '+ name1 +' '+ name2
+    reg_cube.units = 'no_unit'
+    reg_cube.attributes['title'] = 'Lin Regression '+ name1 +' '+ name2
+    reg_cube.attributes['name'] = 'reg'
+    try:
+        reg_cube.remove_coord('surface')
+    except:
+        pass
+    try:
+        reg_cube.remove_coord('time')
+    except:
+        pass
+    iris.save(reg_cube,ncfile_path+'lreg.4ysl.'+name1+'.'+name2+'.nc')
+    if cube1.ndim==4:
+        cor_cube = cube1[0,0,::].copy()
+    elif cube1.ndim==3:
+        cor_cube = cube1[0,::].copy()
+    cor_cube.data[:] = cor_map
+    cor_cube.long_name = 'Correlation '+ name1 +' '+ name2
+    cor_cube.units = 'no_unit'
+    cor_cube.attributes['title'] = 'Correlation '+ name1 +' '+ name2
+    cor_cube.attributes['name'] = 'r_val'
+    try:
+        cor_cube.remove_coord('surface')
+    except:
+        pass
+    try:
+        cor_cube.remove_coord('time')
+    except:
+        pass
+    iris.save(cor_cube,ncfile_path+'cor.4ysl.'+name1+'.'+name2+'.nc')
+
+    return reg_cube, cor_cube
+
+
