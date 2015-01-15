@@ -172,7 +172,8 @@ def linregts(cube1,cube2,name1='name1',name2='name2',ncfile_path='/home/nicholat
     Input: cube_map, cube_ts (time coord only), name1, name2
     Output: reg_cube, cor_cube
     """
-
+    
+    numstats = 5 # number of stats returned for linregress
     linreg_map = np.zeros(cube1.shape[-2::])
     cor_map = np.zeros(cube1.shape[-2::])
     #     cor_map = np.zeros(copy_cube.shape)
