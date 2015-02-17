@@ -68,8 +68,10 @@ def tropwtsiris(cube):
                         250.,   200.,   150.,   100.,    70.,    50.,    30.,    20.]) 
     plev = cube.coord('air_pressure').points
 
-    startlev = np.where(pressure == plev[0])[0][0]
-    endlev = np.where(pressure == plev[-1])[0][0] + 2
+    print plev[0]
+    print plev[-1]
+    startlev = np.where(pressure == np.round(plev[0]))[0][0]
+    endlev = np.where(pressure == np.round(plev[-1]))[0][0] + 2
     print startlev
     print endlev
 

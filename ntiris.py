@@ -58,12 +58,16 @@ def remove_seascyc(cube, time_name='time'):
     Output: cube_rsc
     """
     try:
+        cube.coord('t').standard_name = 'time'
+    except:
+        pass
+    try:
         iris.coord_categorisation.add_month_number(cube, time_name, 'month_number')
     except:
         pass
     else:
         print "month_number added as coord"
-    cube_mean = cube[:,:,::].collapsed(time_name,iris.analysis.MEAN)
+    cube_mean = cube.collapsed(time_name,iris.analysis.MEAN)
     cube_anom = cube-cube_mean
     cube_mon_mean = cube_anom.aggregated_by('month_number', iris.analysis.MEAN)
     seasonal_cycle = bc(cube_anom, cube_mon_mean, 'month_number')
@@ -82,6 +86,12 @@ def enscyc_ag(cube):
     
 
 def composite_m48(cube_name, ncfile_path='/home/nicholat/project/pacemaker/ncfiles/',notanom=False):
+    """
+    Create a 48 month long cube, for use with
+    pacemaker 4 yr oscillating runs
+    Input: cube name (string), ncfilepath 
+
+    """
     cube = iris.load_cube(ncfile_path+cube_name)
     try:
         cube.coord('t').standard_name='time'
@@ -176,6 +186,7 @@ def linregts(cube1,cube2,name1='name1',name2='name2',ncfile_path='/home/nicholat
     numstats = 5 # number of stats returned for linregress
     linreg_map = np.zeros(cube1.shape[-2::])
     cor_map = np.zeros(cube1.shape[-2::])
+    pval_map = np.zeros(cube1.shape[-2::])
     #     cor_map = np.zeros(copy_cube.shape)
     #     print('Linreg/Cor map for '+name1+' and '+name2)
 
@@ -186,9 +197,10 @@ def linregts(cube1,cube2,name1='name1',name2='name2',ncfile_path='/home/nicholat
             var1 = cube1.extract(iris.Constraint(latitude=lat.points[0],longitude=lon.points[0])).data
     #             var2 = cube2.extract(iris.Constraint(latitude=lat.points[0],longitude=lon.points[0])).data
 
-            linreg = stats.linregress(var1,regress_ts)
+            linreg = stats.linregress(regress_ts,var1)
             linreg_map[nlat,nlon] = linreg[0]
             cor_map[nlat,nlon] = linreg[2]
+            pval_map[nlat,nlon] = linreg[3]
 
         
 
@@ -209,7 +221,8 @@ def linregts(cube1,cube2,name1='name1',name2='name2',ncfile_path='/home/nicholat
         reg_cube.remove_coord('time')
     except:
         pass
-    iris.save(reg_cube,ncfile_path+'lreg.4ysl.'+name1+'.'+name2+'.nc')
+#     iris.save(reg_cube,ncfile_path+'lreg.4ysl.'+name1+'.'+name2+'.nc')
+    
     if cube1.ndim==4:
         cor_cube = cube1[0,0,::].copy()
     elif cube1.ndim==3:
@@ -227,8 +240,27 @@ def linregts(cube1,cube2,name1='name1',name2='name2',ncfile_path='/home/nicholat
         cor_cube.remove_coord('time')
     except:
         pass
-    iris.save(cor_cube,ncfile_path+'cor.4ysl.'+name1+'.'+name2+'.nc')
+#     iris.save(cor_cube,ncfile_path+'cor.4ysl.'+name1+'.'+name2+'.nc')
 
-    return reg_cube, cor_cube
+    if cube1.ndim==4:
+        pval_cube = cube1[0,0,::].copy()
+    elif cube1.ndim==3:
+        pval_cube = cube1[0,::].copy()
+    pval_cube.data[:] = pval_map
+    pval_cube.long_name = 'Pval '+ name1 +' '+ name2
+    pval_cube.units = 'no_unit'
+    pval_cube.attributes['title'] = 'Pval '+ name1 +' '+ name2
+    pval_cube.attributes['name'] = 'p_val'
+    try:
+        pval_cube.remove_coord('surface')
+    except:
+        pass
+    try:
+        pval_cube.remove_coord('time')
+    except:
+        pass
+#     iris.save(pval_cube,ncfile_path+'pval.4ysl.'+name1+'.'+name2+'.nc')
+
+    return reg_cube, cor_cube, pval_cube
 
 

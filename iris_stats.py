@@ -157,6 +157,11 @@ def pearsonr(cube_a, cube_b, corr_coords=None):
 
 def linregress(cube_a, cube_b, corr_coords=None):
     """
+    NOT WORKING
+    might not be possible, or easy, without a 
+    loop for calc linear regression
+    16/01/2014
+
     Calculates linear regression between two cubes
     
     Started with 'pearsonr' and used scipy.stats
